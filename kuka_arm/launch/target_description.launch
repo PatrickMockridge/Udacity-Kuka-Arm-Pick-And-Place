@@ -1,6 +1,6 @@
 <launch>
   <!--by default we spawn at a random shelf location-->
-  <arg name="spawn_location" default="0" />
+  <arg name="spawn_location" default="7" />
   <!--send target urdf to param server-->
   <param name="target_description" command="$(find xacro)/xacro --inorder $(find kuka_arm)/urdf/target.urdf.xacro" />
 
