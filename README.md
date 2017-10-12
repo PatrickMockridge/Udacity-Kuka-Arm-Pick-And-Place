@@ -5,9 +5,6 @@
 [dh_diagram]: ./images/kuka_DH_diagram.png
 
 # Kuka KR210 Pick and Place Project
----
-
-![Kuka KR210 Pick and Place Project][kuka_pick_and_place]
 
 This project uses a simulated [Kuka KR210](https://www.kuka.com/en-us/products/robotics-systems/industrial-robots/kr-210-2-f-exclusive) 6 degree of freedom robotic arm to pick up a cylinder placed on a shelf and drop it in a bucket nearby.
 
