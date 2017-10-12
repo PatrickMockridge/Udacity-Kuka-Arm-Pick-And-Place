@@ -58,9 +58,9 @@ def test_code(test_case):
 
     req = Pose(comb)
     start_time = time()
-    
+
     ########################################################################################
-    ## 
+    ##
 
     ## Insert IK code here! starting at: Define DH parameter symbols
 
@@ -90,7 +90,7 @@ def test_code(test_case):
 		alpha3: -pi/2., a3: -0.054, d4: 1.5, q4: q4,
 		alpha4: pi/2, a4: 0, d5: 0, q5: q5,
 		alpha5: -pi/2., a5: 0, d6: 0, q6: q6,
-		alpha6: 0, a5: 0, d7: 0.303, q7: 0}
+		alpha6: 0, a6: 0, d7: 0.303, q7: 0}
 
     print 'DH Table Created'
 
@@ -123,7 +123,7 @@ def test_code(test_case):
     # px, py, pz = end-effector position
     # roll, pitch, yaw = end-effector orientation
 
-    print 'applying end effector position and orientation' 
+    print 'applying end effector position and orientation'
 
     px = req.poses[x].position.x
     py = req.poses[x].position.y
@@ -158,8 +158,8 @@ def test_code(test_case):
     ROT_EE = ROT_z * ROT_y * ROT_x
 
     Rot_Error = ROT_z.subs(y, radians(180)) * ROT_y.subs(p, radians(-90))
-    
-    
+
+
     ROT_EE = ROT_EE * Rot_Error
     ROT_EE = ROT_EE.subs({'r': roll, 'p': pitch, 'y': yaw})
 
@@ -208,11 +208,11 @@ def test_code(test_case):
     print (theta5)
     print (theta6)
 
-    
 
-    ## 
+
+    ##
     ########################################################################################
-    
+
     ########################################################################################
     ## For additional debugging add your forward kinematics here. Use your previously calculated thetas
     ## as the input and output the position of your end effector as your_ee = [x,y,z]
@@ -271,7 +271,7 @@ def test_code(test_case):
         ee_y_e = abs(your_ee[1]-test_case[0][0][1])
         ee_z_e = abs(your_ee[2]-test_case[0][0][2])
         ee_offset = sqrt(ee_x_e**2 + ee_y_e**2 + ee_z_e**2)
-        
+
 
 
 

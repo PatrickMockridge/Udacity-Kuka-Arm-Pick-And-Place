@@ -25,7 +25,7 @@ def handle_calculate_IK(req):
         print "No valid poses received"
         return -1
     else:
-		
+
         ### Your FK code here
         # Create symbols
 
@@ -39,7 +39,7 @@ def handle_calculate_IK(req):
 
         q1, q2, q3, q4, q5, q6, q7 = symbols('q1:8')
 	#
-	#   
+	#
 	# Create Modified DH parameters
 
 
@@ -52,12 +52,12 @@ def handle_calculate_IK(req):
 		alpha3: -pi/2., a3: -0.054, d4: 1.5, q4: q4,
 		alpha4: pi/2, a4: 0, d5: 0, q5: q5,
 		alpha5: -pi/2., a5: 0, d6: 0, q6: q6,
-		alpha6: 0, a5: 0, d7: 0.303, q7: 0}
+		alpha6: 0, a6: 0, d7: 0.303, q7: 0}
 
     	print 'DH Table Created'
 
 	#
-	#            
+	#
 	# Define Modified DH Transformation matrix
 
         print 'Creating TF Matrix'
@@ -94,7 +94,7 @@ def handle_calculate_IK(req):
     	ROT_x = Matrix([[1, 0 , 0],
 		[0, cos(r), -sin(r)],
    		[0, sin(r), cos(r)]]) # ROLL
-	
+
     	ROT_y = Matrix([[cos(p), 0 , sin(p)],
 		[0, 1, 0],
    		[-sin(p), sin(r), cos(r)]]) # PITCH
@@ -106,10 +106,10 @@ def handle_calculate_IK(req):
 	ROT_EE = simplify(ROT_z * ROT_y * ROT_x)
 
    	Rot_Error = ROT_z.subs(y, radians(180)) * ROT_y.subs(p, radians(-90))
-    
-    
+
+
     	ROT_EE = simplify(ROT_EE * Rot_Error)
-    	
+
 	#
 	#
         ###
@@ -130,8 +130,8 @@ def handle_calculate_IK(req):
             (roll, pitch, yaw) = tf.transformations.euler_from_quaternion(
                 [req.poses[x].orientation.x, req.poses[x].orientation.y,
                     req.poses[x].orientation.z, req.poses[x].orientation.w])
-     
-            ### Your IK code here 
+
+            ### Your IK code here
 	    # Compensate for rotation discrepancy between DH parameters and Gazebo
 
 	    ROT_EE = ROT_EE.subs({'r': roll, 'p': pitch, 'y': yaw})
@@ -181,7 +181,7 @@ def handle_calculate_IK(req):
 
             print 'theta 4, 5 and 6 calculated'
 
-		
+
             # Populate response for the IK request
             # In the next line replace theta1,theta2...,theta6 by your joint angle variables
 	    joint_trajectory_point.positions = [theta1, theta2, theta3, theta4, theta5, theta6]
