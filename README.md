@@ -79,25 +79,40 @@ Joint 2 `T-1_2`:
 ```
 Joint 3 `T-2_3`:
 ```
-[[cos(q3), -sin(q3), 0, 1.25000000000000], [sin(q3), cos(q3), 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+[[cos(q3), -sin(q3), 0, 1.25000000000000],
+[sin(q3), cos(q3), 0, 0],
+[0, 0, 1, 0],
+[0, 0, 0, 1]]
 ```
 Joint 4 `T-3_4`:
 ```
-[[cos(q4), -sin(q4), 0, -0.0540000000000000], [0, 0, 1, 1.50000000000000], [-sin(q4), -cos(q4), 0, 0], [0, 0, 0, 1]]
+[[cos(q4), -sin(q4), 0, -0.0540000000000000],
+[0, 0, 1, 1.50000000000000],
+[-sin(q4), -cos(q4), 0, 0],
+[0, 0, 0, 1]]
 ```
 
 Joint 5 `T4_5`
 ```
-[[cos(q5), -sin(q5), 0, 0], [0, 0, -1, 0], [sin(q5), cos(q5), 0, 0], [0, 0, 0, 1]]
+[[cos(q5), -sin(q5), 0, 0],
+[0, 0, -1, 0],
+[sin(q5), cos(q5), 0, 0],
+[0, 0, 0, 1]]
 ```
 
 Joint 6 `T5_6`
 ```
-[[cos(q6), -sin(q6), 0, 0], [0, 0, 1, 0], [-sin(q6), -cos(q6), 0, 0], [0, 0, 0, 1]]
+[[cos(q6), -sin(q6), 0, 0],
+[0, 0, 1, 0],
+[-sin(q6), -cos(q6), 0, 0],
+[0, 0, 0, 1]]
 ```
 Joint 7 (End Effector) `T6_EE`
 ```
-[[1, 0, 0, a6], [0, 1, 0, 0], [0, 0, 1, 0.303000000000000], [0, 0, 0, 1]]
+[[1, 0, 0, a6],
+[0, 1, 0, 0],
+[0, 0, 1, 0.303000000000000],
+[0, 0, 0, 1]]
 ```
 The full transformation for the arm is thus:
 
@@ -124,14 +139,29 @@ If we substitute zero for all thetas, we get a matrix representing the origin po
 The following code was used to calculate the inverse kinematics:
 
 ```
-# SSS triangle for theta2 and theta3
+side_a = 1.501
+side_b = sqrt(pow((sqrt(WC[0] * WC[0] + WC[1] * WC[1]) - 0.35), 2)+ pow((WC[2] - 0.75), 2))
+side_c = 1.25
 
-Make sure you are using robo-nd VM or have Ubuntu+ROS installed locally.
+angle_a = acos((side_b * side_b + side_c * side_c - side_a * side_a) / (2 * side_b * side_c))
+angle_b = acos((side_a * side_a + side_c * side_c - side_b * side_b) / (2 * side_a * side_c))
+angle_c = acos((side_a * side_a + side_b * side_b - side_c * side_c ) / (2 * side_a * side_b))
 
-### One time Gazebo setup step:
-Check the version of gazebo installed on your system using a terminal:
-```sh
-$ gazebo --version
+theta2 = pi/2 - angle_a - atan2(WC[2] - 0.75, sqrt(WC[0] + WC[1] * WC[1]) - 0.35)
+theta3 = pi/2 - (angle_b + 0.036) # 0.036 accounts for sag in link4 of -0.054m
+
+print 'theta 2 and 3 calculated'
+
+R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3]
+R0_3 = R0_3.evalf(subs={q1: theta1, q2:theta2, q3: theta3})
+
+R3_6 = R0_3.transpose() * ROT_EE
+
+# Euler angles from rotation matrix
+
+theta4 = atan2(R3_6[2,2], -R3_6[0,2])
+theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]), R3_6[1,2])
+theta6 = atan2(-R3_6[1,1], R3_6[1,0])
 ```
 To run projects from this repository you need version 7.7.0+
 If your gazebo version is not 7.7.0+, perform the update as follows:
