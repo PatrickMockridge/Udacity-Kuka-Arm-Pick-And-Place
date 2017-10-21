@@ -108,7 +108,7 @@ def handle_calculate_IK(req):
    	Rot_Error = ROT_z.subs(y, radians(180)) * ROT_y.subs(p, radians(-90))
 
 
-    	ROT_EE = simplify(ROT_EE * Rot_Error)
+    ROT_EE = simplify(ROT_EE * Rot_Error)
 
 	#
 	#
@@ -132,17 +132,17 @@ def handle_calculate_IK(req):
                     req.poses[x].orientation.z, req.poses[x].orientation.w])
 
             ### Your IK code here
-	    # Compensate for rotation discrepancy between DH parameters and Gazebo
+	        # Compensate for rotation discrepancy between DH parameters and Gazebo
 
-	    ROT_EE = ROT_EE.subs({'r': roll, 'p': pitch, 'y': yaw})
+	        ROT_EE = ROT_EE.subs({'r': roll, 'p': pitch, 'y': yaw})
 
-   	    EE = Matrix([[px], [py], [pz]])
+   	        EE = Matrix([[px], [py], [pz]])
 
-	    #
-	    #
-	    # Calculate joint angles using Geometric IK method
-	    #
-	    #
+	        #
+	        #
+	        # Calculate joint angles using Geometric IK method
+	        #
+	        #
             ###
 
             print 'EE rotation matrix applied'
@@ -184,8 +184,8 @@ def handle_calculate_IK(req):
 
             # Populate response for the IK request
             # In the next line replace theta1,theta2...,theta6 by your joint angle variables
-	    joint_trajectory_point.positions = [theta1, theta2, theta3, theta4, theta5, theta6]
-	    joint_trajectory_list.append(joint_trajectory_point)
+	        joint_trajectory_point.positions = [theta1, theta2, theta3, theta4, theta5, theta6]
+	        joint_trajectory_list.append(joint_trajectory_point)
 
         rospy.loginfo("length of Joint Trajectory List: %s" % len(joint_trajectory_list))
         return CalculateIKResponse(joint_trajectory_list)
