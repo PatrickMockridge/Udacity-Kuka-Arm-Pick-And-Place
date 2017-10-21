@@ -114,8 +114,8 @@ def handle_calculate_IK(req):
 	#
         ###
 
-        # Initialize service response
-        joint_trajectory_list = []
+    # Initialize service response
+    joint_trajectory_list = []
         for x in xrange(0, len(req.poses)):
             # IK code starts here
             joint_trajectory_point = JointTrajectoryPoint()
