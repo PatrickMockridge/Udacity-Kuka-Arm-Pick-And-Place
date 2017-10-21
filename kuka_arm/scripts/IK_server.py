@@ -52,7 +52,7 @@ def handle_calculate_IK(req):
 		alpha3: -pi/2., a3: -0.054, d4: 1.5, q4: q4,
 		alpha4: pi/2, a4: 0, d5: 0, q5: q5,
 		alpha5: -pi/2., a5: 0, d6: 0, q6: q6,
-		alpha6: 0, a6: 0, d7: 0.303, q7: 0}
+		alpha6: 0, a5: 0, d7: 0.303, q7: 0}
 
     	print 'DH Table Created'
 
@@ -114,9 +114,9 @@ def handle_calculate_IK(req):
 	#
         ###
 
-    # Initialize service response
+        # Initialize service response
     joint_trajectory_list = []
-        for x in xrange(0, len(req.poses)):
+    for x in xrange(0, len(req.poses)):
             # IK code starts here
             joint_trajectory_point = JointTrajectoryPoint()
 
@@ -132,17 +132,17 @@ def handle_calculate_IK(req):
                     req.poses[x].orientation.z, req.poses[x].orientation.w])
 
             ### Your IK code here
-	        # Compensate for rotation discrepancy between DH parameters and Gazebo
+	    # Compensate for rotation discrepancy between DH parameters and Gazebo
 
-	        ROT_EE = ROT_EE.subs({'r': roll, 'p': pitch, 'y': yaw})
+	    ROT_EE = ROT_EE.subs({'r': roll, 'p': pitch, 'y': yaw})
 
-   	        EE = Matrix([[px], [py], [pz]])
+   	    EE = Matrix([[px], [py], [pz]])
 
-	        #
-	        #
-	        # Calculate joint angles using Geometric IK method
-	        #
-	        #
+	    #
+	    #
+	    # Calculate joint angles using Geometric IK method
+	    #
+	    #
             ###
 
             print 'EE rotation matrix applied'
