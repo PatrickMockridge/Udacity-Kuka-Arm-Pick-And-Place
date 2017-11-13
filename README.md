@@ -3,6 +3,11 @@
 [//]: # (Image References)
 [kuka_pick_and_place]: ./images/kuka_pick_and_place.png
 [dh_diagram]: ./images/kuka_DH_diagram.png
+[triangle_frame]: ./images/misc4.png
+[joint_frame]: ./images/misc3.png
+[hand_example_1]: ./images/misc5.png
+[hand_example_2]: ./images/misc6.png
+[hand_example_3]: ./images/misc7.png
 
 # Kuka KR210 Pick and Place Project
 
@@ -63,28 +68,28 @@ The `.subs` convenience method for matrices in Sympy was used to create the tran
 
 The transformation matrices for each joint are thus:
 
-Joint 1 `T-0_1`:
+Joint 1 `T0_1`:
 ```
 [[cos(q1), -sin(q1), 0, 0],
 [sin(q1), cos(q1), 0, 0],
 [0, 0, 1, 0.750000000000000],
 [0, 0, 0, 1]]
 ```
-Joint 2 `T-1_2`:
+Joint 2 `T1_2`:
 ```
 [[cos(q2 - 0.5*pi), -sin(q2 - 0.5*pi), 0, 0.350000000000000],
 [0, 0, 1, 0],
 [-sin(q2 - 0.5*pi), -cos(q2 - 0.5*pi), 0, 0],
 [0, 0, 0, 1]]
 ```
-Joint 3 `T-2_3`:
+Joint 3 `T2_3`:
 ```
 [[cos(q3), -sin(q3), 0, 1.25000000000000],
 [sin(q3), cos(q3), 0, 0],
 [0, 0, 1, 0],
 [0, 0, 0, 1]]
 ```
-Joint 4 `T-3_4`:
+Joint 4 `T3_4`:
 ```
 [[cos(q4), -sin(q4), 0, -0.0540000000000000],
 [0, 0, 1, 1.50000000000000],
@@ -136,9 +141,16 @@ If we substitute zero for all thetas, we get a matrix representing the origin po
 
 ### Inverse Kinematics
 
+![Joint Frame for Inverse Kinematics Calculation][joint_frame]
+![Hand Calc 1][hand_example_1]
+![Hand Calc 3][hand_example_3]
+
+
 The following code was used to calculate the inverse kinematics:
 
 ```
+theta1 = atan2(WC[1], WC[0]) #inferred from the position of the end effector
+
 side_a = 1.501
 side_b = sqrt(pow((sqrt(WC[0] * WC[0] + WC[1] * WC[1]) - 0.35), 2)+ pow((WC[2] - 0.75), 2))
 side_c = 1.25
@@ -150,10 +162,18 @@ angle_c = acos((side_a * side_a + side_b * side_b - side_c * side_c ) / (2 * sid
 theta2 = pi/2 - angle_a - atan2(WC[2] - 0.75, sqrt(WC[0] + WC[1] * WC[1]) - 0.35)
 theta3 = pi/2 - (angle_b + 0.036) # 0.036 accounts for sag in link4 of -0.054m
 
-print 'theta 2 and 3 calculated'
+```
+
+![Triangle Frame for Inverse Kinematics Calculation][triangle_frame]
+![Hand Calc 2][hand_example_2]
+
+```
 
 R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3]
 R0_3 = R0_3.evalf(subs={q1: theta1, q2:theta2, q3: theta3})
+
+# The inverse of the rotation matrix is the transpose as it is an orthogonal matrix
+# This saves on compute time
 
 R3_6 = R0_3.transpose() * ROT_EE
 
@@ -163,8 +183,10 @@ theta4 = atan2(R3_6[2,2], -R3_6[0,2])
 theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]), R3_6[1,2])
 theta6 = atan2(-R3_6[1,1], R3_6[1,0])
 ```
+
 To run projects from this repository you need version 7.7.0+
 If your gazebo version is not 7.7.0+, perform the update as follows:
+
 ```sh
 $ sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
 $ wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
@@ -219,6 +241,7 @@ For demo mode make sure the **demo** flag is set to _"true"_ in `inverse_kinemat
 In addition, you can also control the spawn location of the target object in the shelf. To do this, modify the **spawn_location** argument in `target_description.launch` file under /RoboND-Kinematics-Project/kuka_arm/launch. 0-9 are valid values for spawn_location with 0 being random mode.
 
 You can launch the project by
+
 ```sh
 $ cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts
 $ ./safe_spawner.sh
