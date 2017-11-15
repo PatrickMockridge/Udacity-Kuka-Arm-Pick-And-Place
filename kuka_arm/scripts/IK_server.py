@@ -71,9 +71,10 @@ def handle_calculate_IK(req):
 		[0, cos(r), -sin(r)],
    		[0, sin(r), cos(r)]]) # ROLL
 
-        ROT_y = Matrix([[cos(p), 0 , sin(p)],
-		[0, 1, 0],
-   		[-sin(p), sin(r), cos(r)]]) # PITCH
+        ROT_y = Matrix([
+		[cos(p), 	0 , 	sin(p)],
+		[0, 		1, 	0],
+   		[-sin(p), 	0, 	cos(p)]]) # PITCH (CHANGED!)
 
         ROT_z = Matrix([[cos(y), -sin(y), 0],
 		[sin(y), cos(y), 0],
@@ -119,7 +120,7 @@ def handle_calculate_IK(req):
             angle_b = acos((side_a * side_a + side_c * side_c - side_b * side_b) / (2 * side_a * side_c))
             angle_c = acos((side_a * side_a + side_b * side_b - side_c * side_c ) / (2 * side_a * side_b))
 
-            theta2 = pi/2 - angle_a - atan2(WC[2] - 0.75, sqrt(WC[0] + WC[1] * WC[1]) - 0.35)
+            theta2 = pi/2 - angle_a - atan2(WC[2] - 0.75, sqrt(WC[0] * WC[0] + WC[1] * WC[1]) - 0.35) #(CHANGED!!!)
 
             theta3 = pi/2 - (angle_b + 0.036) # 0.036 accounts for sag in link4 of -0.054m
 

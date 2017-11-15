@@ -84,13 +84,13 @@ def test_code(test_case):
 
     # Modified DH params
 
-    DH_Table = {alpha0: 0, a0: 0, d1: 0.75, q1: q1,
-		alpha1: -pi/2., a1: 0.35, d2: 0, q2: -pi/2. + q2,
-		alpha2: 0, a2: 1.25, d3: 0, q3: q3,
-		alpha3: -pi/2., a3: -0.054, d4: 1.5, q4: q4,
-		alpha4: pi/2, a4: 0, d5: 0, q5: q5,
-		alpha5: -pi/2., a5: 0, d6: 0, q6: q6,
-		alpha6: 0, a6: 0, d7: 0.303, q7: 0}
+    DH_Table = {alpha0: 0, 	a0: 0, 		d1: 0.75, 	q1: q1,
+		alpha1: -pi/2., a1: 0.35,	d2: 0, 		q2: -pi/2. + q2,
+		alpha2: 0, 	a2: 1.25, 	d3: 0, 		q3: q3,
+		alpha3: -pi/2., a3: -0.054, 	d4: 1.5, 	q4: q4,
+		alpha4: pi/2, 	a4: 0, 		d5: 0, 		q5: q5,
+		alpha5: -pi/2., a5: 0, 		d6: 0, 		q6: q6,
+		alpha6: 0, 	a6: 0, 		d7: 0.303, 	q7: 0}
 
     print 'DH Table Created'
 
@@ -99,10 +99,12 @@ def test_code(test_case):
     print 'Creating TF Matrix'
 
     def TF_Matrix(alpha, a, d, q):
-	TF = Matrix([[cos(q), -sin(q), 0, a],
-	     [sin(q)*cos(alpha), cos(q)*cos(alpha), -sin(alpha), -sin(alpha)*d],
-	     [sin(q)* sin(alpha), cos(q)*sin(alpha), cos(alpha), cos(alpha)*d],
-	     [0,0,0,1]])
+	TF = Matrix([
+			[cos(q), 		-sin(q), 		0, 		a],
+	     		[sin(q)*cos(alpha), 	cos(q)*cos(alpha), 	-sin(alpha), 	-sin(alpha)*d],
+	     		[sin(q)* sin(alpha), 	cos(q)*sin(alpha), 	cos(alpha), 	cos(alpha)*d],
+	     		[0,			0,			0,		1]
+		   ])
   	return TF
 
     print 'applying transforms'
@@ -143,17 +145,20 @@ def test_code(test_case):
 
     r, p , y = symbols('r p y')
 
-    ROT_x = Matrix([[1, 0 , 0],
-		[0, cos(r), -sin(r)],
-   		[0, sin(r), cos(r)]]) # ROLL
+    ROT_x = Matrix([
+		[1, 	0 , 		0],
+		[0, 	cos(r), 	-sin(r)],
+   		[0, 	sin(r), 	cos(r)]]) # ROLL
 
-    ROT_y = Matrix([[cos(p), 0 , sin(p)],
-		[0, 1, 0],
-   		[-sin(p), sin(r), cos(r)]]) # PITCH
+    ROT_y = Matrix([
+		[cos(p), 	0 , 	sin(p)],
+		[0, 		1, 	0],
+   		[-sin(p), 	0, 	cos(p)]]) # PITCH (CHANGED!)
 
-    ROT_z = Matrix([[cos(y), -sin(y), 0],
-		[sin(y), cos(y), 0],
-		[0, 0, 1]]) # YAW
+    ROT_z = Matrix([
+		[cos(y), 	-sin(y), 	0],
+		[sin(y), 	cos(y), 	0],
+		[0, 		0, 		1]]) # YAW
 
     ROT_EE = ROT_z * ROT_y * ROT_x
 
@@ -183,20 +188,20 @@ def test_code(test_case):
     angle_b = acos((side_a * side_a + side_c * side_c - side_b * side_b) / (2 * side_a * side_c))
     angle_c = acos((side_a * side_a + side_b * side_b - side_c * side_c ) / (2 * side_a * side_b))
 
-    theta2 = pi/2 - angle_a - atan2(WC[2] - 0.75, sqrt(WC[0] + WC[1] * WC[1]) - 0.35)
+    theta2 = pi/2 - angle_a - atan2(WC[2] - 0.75, sqrt(WC[0] * WC[0] + WC[1] * WC[1]) - 0.35) #(CHANGED!!!)
     theta3 = pi/2 - (angle_b + 0.036) # 0.036 accounts for sag in link4 of -0.054m
-
+ 
     print 'theta 2 and 3 calculated'
 
     R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3]
     R0_3 = R0_3.evalf(subs={q1: theta1, q2:theta2, q3: theta3})
 
-    R3_6 = R0_3.transpose() * ROT_EE
+    R3_6 = R0_3.inv('LU') * ROT_EE
 
     # Euler angles from rotation matrix
 
     theta4 = atan2(R3_6[2,2], -R3_6[0,2])
-    theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]), R3_6[1,2])
+    theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]*R3_6[2,2]), R3_6[1,2])
     theta6 = atan2(-R3_6[1,1], R3_6[1,0])
 
     print 'theta 4, 5 and 6 calculated'
@@ -271,6 +276,10 @@ def test_code(test_case):
         ee_y_e = abs(your_ee[1]-test_case[0][0][1])
         ee_z_e = abs(your_ee[2]-test_case[0][0][2])
         ee_offset = sqrt(ee_x_e**2 + ee_y_e**2 + ee_z_e**2)
+	print ("\nEnd effector error for x position is: %04.8f" % ee_x_e)
+	print ("End effector error for y position is: %04.8f" % ee_y_e)
+	print ("End effector error for z position is: %04.8f" % ee_z_e)
+	print ("Overall end effector offset is: %04.8f units \n" % ee_offset)
 
 
 
@@ -278,6 +287,6 @@ def test_code(test_case):
 
 if __name__ == "__main__":
     # Change test case number for different scenarios
-    test_case_number = 3
+    test_case_number = 2
 
     test_code(test_cases[test_case_number])
