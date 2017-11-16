@@ -8,6 +8,7 @@
 [hand_example_1]: ./images/misc5.png
 [hand_example_2]: ./images/misc6.png
 [hand_example_3]: ./images/misc7.png
+[video_link_image]: ./images/misc8.png
 
 # Kuka KR210 Pick and Place Project
 
@@ -145,6 +146,8 @@ If we substitute zero for all thetas, we get a matrix representing the origin po
 ![Hand Calc 1][hand_example_1]
 ![Hand Calc 3][hand_example_3]
 
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](http://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
+
 
 The following code was used to calculate the inverse kinematics:
 
@@ -168,7 +171,6 @@ theta3 = pi/2. - (angle_b + 0.036) # 0.036 accounts for sag in link4 of -0.054m
 ![Hand Calc 2][hand_example_2]
 
 ```
-
 R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3]
 R0_3 = R0_3.evalf(subs={q1: theta1, q2:theta2, q3: theta3})
 
@@ -183,6 +185,14 @@ theta4 = atan2(R3_6[2,2], -R3_6[0,2])
 theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2] * R3_6[2,2]), R3_6[1,2])
 theta6 = atan2(-R3_6[1,1], R3_6[1,0])
 ```
+
+Successful Pick and Place using the IK_server.py code:
+
+![Success Example][video_link_image]
+
+A successful pick and place operation is posted on youtube here:
+
+[![Pick and Place Youtube Video](http://img.youtube.com/vi/odLVMeGWJ18/0.jpg)](https://youtu.be/odLVMeGWJ18)
 
 To run projects from this repository you need version 7.7.0+
 If your gazebo version is not 7.7.0+, perform the update as follows:
