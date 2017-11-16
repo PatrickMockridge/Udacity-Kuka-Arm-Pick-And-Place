@@ -32,20 +32,22 @@ def handle_calculate_IK(req):
         q1, q2, q3, q4, q5, q6, q7 = symbols('q1:8')
 
         # Define DH Transformation Matrix
-        DH_Table = {alpha0: 0, a0: 0, d1: 0.75, q1: q1,
-		alpha1: -pi/2., a1: 0.35, d2: 0, q2: -pi/2. + q2,
-		alpha2: 0, a2: 1.25, d3: 0, q3: q3,
-		alpha3: -pi/2., a3: -0.054, d4: 1.5, q4: q4,
-		alpha4: pi/2, a4: 0, d5: 0, q5: q5,
-		alpha5: -pi/2., a5: 0, d6: 0, q6: q6,
-		alpha6: 0, a5: 0, d7: 0.303, q7: 0}
+	DH_Table = {alpha0: 0, 	a0: 0, 		d1: 0.75, 	q1: q1,
+		alpha1: -pi/2., a1: 0.35,	d2: 0, 		q2: -pi/2. + q2,
+		alpha2: 0, 	a2: 1.25, 	d3: 0, 		q3: q3,
+		alpha3: -pi/2., a3: -0.054, 	d4: 1.5, 	q4: q4,
+		alpha4: pi/2, 	a4: 0, 		d5: 0, 		q5: q5,
+		alpha5: -pi/2., a5: 0, 		d6: 0, 		q6: q6,
+		alpha6: 0, 	a6: 0, 		d7: 0.303, 	q7: 0}
 
-        def TF_Matrix(alpha, a, d, q):
-    	    TF = Matrix([[cos(q), -sin(q), 0, a],
-    	     	[sin(q)*cos(alpha), cos(q)*cos(alpha), -sin(alpha), -sin(alpha)*d],
-    	     	[sin(q)* sin(alpha), cos(q)*sin(alpha), cos(alpha), cos(alpha)*d],
-    	     	[0,0,0,1]])
-      	    return TF
+    	def TF_Matrix(alpha, a, d, q):
+		TF = Matrix([
+			[cos(q), 		-sin(q), 		0, 		a],
+	     		[sin(q)*cos(alpha), 	cos(q)*cos(alpha), 	-sin(alpha), 	-sin(alpha)*d],
+	     		[sin(q)* sin(alpha), 	cos(q)*sin(alpha), 	cos(alpha), 	cos(alpha)*d],
+	     		[0,			0,			0,		1]
+		   ])
+  		return TF
 
         T0_1 = TF_Matrix(alpha0, a0, d1, q1).subs(DH_Table)
     	T1_2 = TF_Matrix(alpha1, a1, d2, q2).subs(DH_Table)
@@ -112,7 +114,7 @@ def handle_calculate_IK(req):
             theta1 = atan2(WC[1], WC[0])
 
             side_a = 1.501
-            side_b = sqrt(pow((sqrt(WC[0] * WC[0] + WC[1] * WC[1]) - 0.35), 2)+ pow((WC[2] - 0.75), 2))
+            side_b = sqrt(pow(sqrt(WC[0] * WC[0] + WC[1] * WC[1]) - 0.35, 2)+ pow((WC[2] - 0.75), 2))
 
             side_c = 1.25
 
@@ -130,7 +132,7 @@ def handle_calculate_IK(req):
             R3_6 = R0_3.transpose() * ROT_EE
 
             theta4 = atan2(R3_6[2,2], -R3_6[0,2])
-            theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]), R3_6[1,2])
+            theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]*R3_6[2,2]), R3_6[1,2])
             theta6 = atan2(-R3_6[1,1], R3_6[1,0])
 
 	    joint_trajectory_point.positions = [theta1, theta2, theta3, theta4, theta5, theta6]
