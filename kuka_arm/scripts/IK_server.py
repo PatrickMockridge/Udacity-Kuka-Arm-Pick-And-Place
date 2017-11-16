@@ -57,13 +57,13 @@ def handle_calculate_IK(req):
 
     	T0_EE = simplify(T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_EE)
 
-        px = req.poses[x].position.x
-        py = req.poses[x].position.y
-        pz = req.poses[x].position.z
+        # px = req.poses[x].position.x
+        # py = req.poses[x].position.y
+        # pz = req.poses[x].position.z
 
-        (roll, pitch, yaw) = tf.transformations.euler_from_quaternion([
-    			req.poses[x].orientation.x, req.poses[x].orientation.y,
-    			req.poses[x].orientation.z, req.poses[x].orientation.w])
+        # (roll, pitch, yaw) = tf.transformations.euler_from_quaternion([
+    			# req.poses[x].orientation.x, req.poses[x].orientation.y,
+    			# req.poses[x].orientation.z, req.poses[x].orientation.w])
 
         r, p , y = symbols('r p y')
 
@@ -133,8 +133,8 @@ def handle_calculate_IK(req):
             theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]), R3_6[1,2])
             theta6 = atan2(-R3_6[1,1], R3_6[1,0])
 
-	        joint_trajectory_point.positions = [theta1, theta2, theta3, theta4, theta5, theta6]
-	        joint_trajectory_list.append(joint_trajectory_point)
+	    joint_trajectory_point.positions = [theta1, theta2, theta3, theta4, theta5, theta6]
+	    joint_trajectory_list.append(joint_trajectory_point)
 
         rospy.loginfo("length of Joint Trajectory List: %s" % len(joint_trajectory_list))
         return CalculateIKResponse(joint_trajectory_list)
@@ -148,4 +148,4 @@ def IK_server():
     rospy.spin()
 
 if __name__ == "__main__":
-IK_server()
+	IK_server()
